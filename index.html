@@ -2,21 +2,37 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<title>CVC 聲音辨認遊戲（純文字）</title>
+<title>CVC 聲音辨認遊戲（手機友善）</title>
 <style>
   body { font-family: Arial; text-align: center; background: #f0f8ff; }
-  button { font-size: 48px; padding: 20px 40px; margin: 20px; cursor: pointer; 
-           background-color: #d3d3d3; color: black; border: none; border-radius: 12px; transition: 0.2s; }
+  button { 
+    font-size: 64px;           /* 字體更大 */
+    padding: 40px 20px;        /* 上下留白大 */
+    margin: 20px; 
+    cursor: pointer; 
+    background-color: #d3d3d3; 
+    color: black; 
+    border: none; 
+    border-radius: 16px; 
+    transition: 0.2s; 
+    display: block; 
+    width: 80%;                /* 手機橫向也好點 */
+    line-height: 1.5em;        /* 三行高度 */
+    word-break: break-word;     /* 適合長單字換行 */
+  }
   button.selected { background-color: #1E90FF; color: white; }
   #score, #feedback { font-size: 36px; margin-top: 25px; }
+  #restart { font-size: 36px; padding: 20px 40px; background-color: #FF6347; color: white; border-radius: 16px; }
+  #restart:hover { background-color: #FF4500; }
 </style>
 </head>
 <body>
-<h1 style="font-size:64px;">CVC 聲音辨認遊戲</h1>
-<p style="font-size:32px;">聽音並選出正確單字</p>
+<h1 style="font-size:72px;">CVC 聲音辨認遊戲</h1>
+<p style="font-size:36px;">聽音並選出正確單字</p>
 <div id="options"></div>
 <div id="feedback"></div>
 <div id="score">分數：0</div>
+<button id="restart" onclick="restartGame()">重新開始 🔄</button>
 
 <script>
 // 題庫 50 個以上 CVC 單字
@@ -33,13 +49,19 @@ let correctWord = null;
 
 function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
 
+// 使用瀏覽器 TTS 播放單字
+function speak(word) {
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.lang = "en-US";
+  speechSynthesis.speak(utterance);
+}
+
 function playSound() {
   const shuffled = shuffle(words);
   correctWord = shuffled[0];
 
-  // 題目出現時自動播放聲音
-  const audio = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&q=${correctWord}&tl=en&client=tw-ob`);
-  audio.play();
+  // 自動播放單字
+  speak(correctWord);
 
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
@@ -74,8 +96,19 @@ function checkAnswer(btn, item) {
     feedback.innerText = `❌ 答錯了！正確答案是 "${correctWord}"`;
   }
   document.getElementById("score").innerText = "分數：" + score;
+
+  // 1 秒後自動出下一題
+  setTimeout(playSound, 1000);
 }
-  
+
+// 重新開始遊戲
+function restartGame() {
+  score = 0;
+  document.getElementById("score").innerText = "分數：0";
+  document.getElementById("feedback").innerText = "";
+  playSound();
+}
+
 // 初始自動出題
 playSound();
 </script>
