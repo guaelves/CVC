@@ -2,18 +2,19 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<title>CVC 聲音辨認遊戲</title>
+<title>CVC 聲音辨認遊戲（大字 + 中置方塊）</title>
 <style>
   body { font-family: Arial; text-align: center; background: #f0f8ff; }
-  button { 
-    font-size: 64px;           /* 字體大 */
-    padding: 40px 20px;        /* 上下留白大 */
+  #options { display: flex; flex-direction: column; align-items: center; }
+  button.option { 
+    font-size: 80px;           /* 文字更大 */
+    padding: 50px 30px;        /* 高度大，適合小孩點 */
     margin: 20px; 
     cursor: pointer; 
     background-color: #d3d3d3; 
     color: black; 
     border: none; 
-    border-radius: 16px; 
+    border-radius: 20px; 
     transition: 0.2s; 
     display: block; 
     width: 80%;                /* 手機橫向也好點 */
@@ -21,12 +22,17 @@
     word-break: break-word;     
     text-align: center;         /* 文字置中 */
   }
-  button.selected { background-color: #1E90FF; color: white; }
-  #score, #feedback { font-size: 36px; margin-top: 25px; }
+  button.option.selected { 
+    background-color: #1E90FF; 
+    color: white; 
+    margin-left: auto;
+    margin-right: auto;         /* 選中藍底方塊置中 */
+  }
+  #score, #feedback { font-size: 42px; margin-top: 25px; }
   #restart, #replay { 
-    font-size: 36px; 
-    padding: 20px 40px; 
-    border-radius: 16px; 
+    font-size: 40px; 
+    padding: 20px 50px; 
+    border-radius: 20px; 
     margin: 10px; 
   }
   #restart { background-color: #FF6347; color: white; }
@@ -36,8 +42,8 @@
 </style>
 </head>
 <body>
-<h1 style="font-size:72px;">CVC 聲音辨認遊戲</h1>
-<p style="font-size:36px;">聽音並選出正確單字</p>
+<h1 style="font-size:80px;">CVC 聲音辨認遊戲</h1>
+<p style="font-size:40px;">聽音並選出正確單字</p>
 <div id="options"></div>
 <div id="feedback"></div>
 <div id="score">分數：0</div>
@@ -85,6 +91,7 @@ function playSound() {
 
   choices.forEach(item => {
     const btn = document.createElement("button");
+    btn.className = "option";
     btn.innerText = item;
     btn.onclick = () => checkAnswer(btn, item);
     optionsDiv.appendChild(btn);
@@ -100,7 +107,7 @@ function replayWord() {
 
 function checkAnswer(btn, item) {
   // 點選後將所有按鈕恢復灰底
-  document.querySelectorAll("button").forEach(b => b.classList.remove("selected"));
+  document.querySelectorAll("button.option").forEach(b => b.classList.remove("selected"));
 
   // 點選按鈕變藍底
   btn.classList.add("selected");
