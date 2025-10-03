@@ -2,139 +2,19 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<title>CVC 聲音辨認遊戲（大字 + 中置方塊）</title>
-<style>
-  body { font-family: Arial; text-align: center; background: #f0f8ff; }
-  #options { display: flex; flex-direction: column; align-items: center; }
-  button.option { 
-    font-size: 80px;           /* 文字更大 */
-    padding: 50px 30px;        /* 高度大，適合小孩點 */
-    margin: 20px; 
-    cursor: pointer; 
-    background-color: #d3d3d3; 
-    color: black; 
-    border: none; 
-    border-radius: 20px; 
-    transition: 0.2s; 
-    display: block; 
-    width: 80%;                /* 手機橫向也好點 */
-    line-height: 1.5em;        /* 三行高度 */
-    word-break: break-word;     
-    text-align: center;         /* 文字置中 */
-  }
-  button.option.selected { 
-    background-color: #1E90FF; 
-    color: white; 
-    margin-left: auto;
-    margin-right: auto;         /* 選中藍底方塊置中 */
-  }
-  #score, #feedback { font-size: 42px; margin-top: 25px; }
-  #restart, #replay { 
-    font-size: 40px; 
-    padding: 20px 50px; 
-    border-radius: 20px; 
-    margin: 10px; 
-  }
-  #restart { background-color: #FF6347; color: white; }
-  #restart:hover { background-color: #FF4500; }
-  #replay { background-color: #32CD32; color: white; }
-  #replay:hover { background-color: #228B22; }
-</style>
+<title>CVC 聲音辨認遊戲</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1 style="font-size:80px;">CVC 聲音辨認遊戲</h1>
-<p style="font-size:40px;">聽音並選出正確單字</p>
+<h1>CVC 聲音辨認遊戲</h1>
+<p>聽音並選出正確單字</p>
 <div id="options"></div>
 <div id="feedback"></div>
 <div id="score">分數：0</div>
 
-<button id="replay" onclick="replayWord()">再次聽 🔊</button>
-<button id="restart" onclick="restartGame()">重新開始 🔄</button>
+<button id="replay">再次聽 🔊</button>
+<button id="restart">重新開始 🔄</button>
 
-<script>
-// 題庫 50 個以上 CVC 單字
-const words = [
-  "cat","dog","rat","bat","hat","sun","pig","map","cup","fox",
-  "hen","jam","kid","log","man","net","pan","pen","pot","red",
-  "run","sip","sit","tap","top","tan","web","wax","win","wig",
-  "yak","yes","yap","zip","zoo","cab","dad","bed","jet","mob",
-  "nod","pad","tip","van","wet","fat","fun","bag","cap","dig"
-];
-
-let score = 0;
-let correctWord = null;
-
-function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
-
-// 使用瀏覽器 TTS 播放單字
-function speak(word) {
-  const utterance = new SpeechSynthesisUtterance(word);
-  utterance.lang = "en-US";
-  speechSynthesis.speak(utterance);
-}
-
-// 題目生成
-function playSound() {
-  const shuffled = shuffle(words);
-  correctWord = shuffled[0];
-
-  // 自動播放單字
-  speak(correctWord);
-
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
-
-  // 隨機選三個選項
-  let choices = shuffle(words.slice(0, 3));
-  if (!choices.includes(correctWord)) choices[0] = correctWord;
-  choices = shuffle(choices);
-
-  choices.forEach(item => {
-    const btn = document.createElement("button");
-    btn.className = "option";
-    btn.innerText = item;
-    btn.onclick = () => checkAnswer(btn, item);
-    optionsDiv.appendChild(btn);
-  });
-
-  document.getElementById("feedback").innerText = "";
-}
-
-// 再次聽按鈕
-function replayWord() {
-  if (correctWord) speak(correctWord);
-}
-
-function checkAnswer(btn, item) {
-  // 點選後將所有按鈕恢復灰底
-  document.querySelectorAll("button.option").forEach(b => b.classList.remove("selected"));
-
-  // 點選按鈕變藍底
-  btn.classList.add("selected");
-
-  const feedback = document.getElementById("feedback");
-  if (item === correctWord) {
-    score++;
-    feedback.innerText = "✅ 答對了！";
-  } else {
-    feedback.innerText = `❌ 答錯了！正確答案是 "${correctWord}"`;
-  }
-  document.getElementById("score").innerText = "分數：" + score;
-
-  // 1 秒後自動出下一題
-  setTimeout(playSound, 1000);
-}
-
-// 重新開始遊戲
-function restartGame() {
-  score = 0;
-  document.getElementById("score").innerText = "分數：0";
-  document.getElementById("feedback").innerText = "";
-  playSound();
-}
-
-// 初始自動出題
-playSound();
-</script>
+<script src="script.js"></script>
 </body>
 </html>
