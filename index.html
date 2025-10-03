@@ -5,16 +5,15 @@
 <title>CVC 聲音辨認遊戲（純文字）</title>
 <style>
   body { font-family: Arial; text-align: center; background: #f0f8ff; }
-  button { font-size: 32px; padding: 15px 30px; margin: 15px; cursor: pointer; 
-           background-color: #1E90FF; color: white; border: none; border-radius: 8px; }
-  button:hover { background-color: #1C86EE; }
-  #score, #feedback { font-size: 28px; margin-top: 20px; }
+  button { font-size: 48px; padding: 20px 40px; margin: 20px; cursor: pointer; 
+           background-color: #d3d3d3; color: black; border: none; border-radius: 12px; transition: 0.2s; }
+  button.selected { background-color: #1E90FF; color: white; }
+  #score, #feedback { font-size: 36px; margin-top: 25px; }
 </style>
 </head>
 <body>
-<h1>CVC 聲音辨認遊戲</h1>
-<p>聽音並選出正確單字</p>
-<button onclick="playSound()">播放聲音 🔊</button>
+<h1 style="font-size:64px;">CVC 聲音辨認遊戲</h1>
+<p style="font-size:32px;">聽音並選出正確單字</p>
 <div id="options"></div>
 <div id="feedback"></div>
 <div id="score">分數：0</div>
@@ -38,7 +37,7 @@ function playSound() {
   const shuffled = shuffle(words);
   correctWord = shuffled[0];
 
-  // 使用 Google TTS 播放單字
+  // 題目出現時自動播放聲音
   const audio = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&q=${correctWord}&tl=en&client=tw-ob`);
   audio.play();
 
@@ -53,14 +52,20 @@ function playSound() {
   choices.forEach(item => {
     const btn = document.createElement("button");
     btn.innerText = item;
-    btn.onclick = () => checkAnswer(item);
+    btn.onclick = () => checkAnswer(btn, item);
     optionsDiv.appendChild(btn);
   });
 
   document.getElementById("feedback").innerText = "";
 }
 
-function checkAnswer(item) {
+function checkAnswer(btn, item) {
+  // 點選後將所有按鈕恢復灰底
+  document.querySelectorAll("button").forEach(b => b.classList.remove("selected"));
+
+  // 點選按鈕變藍底
+  btn.classList.add("selected");
+
   const feedback = document.getElementById("feedback");
   if (item === correctWord) {
     score++;
@@ -70,6 +75,9 @@ function checkAnswer(item) {
   }
   document.getElementById("score").innerText = "分數：" + score;
 }
+  
+// 初始自動出題
+playSound();
 </script>
 </body>
 </html>
