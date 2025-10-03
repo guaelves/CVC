@@ -1,1 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>CVC 聲音辨認遊戲（Google TTS）</title>
+<style>
+  body { font-family: Arial; text-align: center; background: #f0f8ff; }
+  button { font-size: 18px; padding: 8px 12px; margin: 8px; cursor: pointer; }
+  #score, #feedback { font-size: 20px; margin-top: 10px; }
+  img { display: block; margin: 0 auto; }
+</style>
+</head>
+<body>
+<h1>CVC 聲音辨認遊戲</h1>
+<p>聽音並選出正確圖片</p>
+<button onclick="playSound()">播放聲音 🔊</button>
+<div id="options"></div>
+<div id="feedback"></div>
+<div id="score">分數：0</div>
 
+<script>
+// 題庫 50 個以上 CVC 單字
+const words = [
+  { word: "cat", img: "https://i.imgur.com/6cXo3jK.png" },
+  { word: "dog", img: "https://i.imgur.com/6D2sS9f.png" },
+  { word: "rat", img: "https://i.imgur.com/5k5P0A5.png" },
+  { word: "bat", img: "https://i.imgur.com/X4u2v6Z.png" },
+  { word: "hat", img: "https://i.imgur.com/Bl3G1Zx.png" },
+  { word: "sun", img: "https://i.imgur.com/8hT5M1T.png" },
+  { word: "pig", img: "https://i.imgur.com/0p3N2gH.png" },
+  { word: "map", img: "https://i.imgur.com/9zKx0Lp.png" },
+  { word: "cup", img: "https://i.imgur.com/JG0kVQy.png" },
+  { word: "fox", img: "https://i.imgur.com/KwBl5Gf.png" },
+  { word: "hen", img: "https://i.imgur.com/hy0WjFe.png" },
+  { word: "jam", img: "https://i.imgur.com/wrU1nqG.png" },
+  { word: "kid", img: "https://i.imgur.com/BZLCZ8b.png" },
+  { word: "log", img: "https://i.imgur.com/BPIy2LQ.png" },
+  { word: "man", img: "https://i.imgur.com/3WfB8zO.png" },
+  { word: "net", img: "https://i.imgur.com/3g9YtTb.png" },
+  { word: "pan", img: "https://i.imgur.com/hH8zJmI.png" },
+  { word: "pen", img: "https://i.imgur.com/9d0Gk5L.png" },
+  { word: "pot", img: "https://i.imgur.com/YcQv5Ta.png" },
+  { word: "red", img: "https://i.imgur.com/LjXEb2q.png" },
+  { word: "run", img: "https://i.imgur.com/UqVbCjG.png" },
+  { word: "sip", img: "https://i.imgur.com/4Xh7Cj1.png" },
+  { word: "sit", img: "https://i.imgur.com/Y2l4bTq.png" },
+  { word: "tap", img: "https://i.imgur.com/h0i9ftL.png" },
+  { word: "top", img: "https://i.imgur.com/EXc5rQE.png" },
+  { word: "tan", img: "https://i.imgur.com/cqjz2V8.png" },
+  { word: "web", img: "https://i.imgur.com/9m6I5dI.png" },
+  { word: "wax", img: "https://i.imgur.com/p3C4p8R.png" },
+  { word: "win", img: "https://i.imgur.com/N99vD3J.png" },
+  { word: "wig", img: "https://i.imgur.com/J1wUqEb.png" },
+  { word: "yak", img: "https://i.imgur.com/fPpG7FL.png" },
+  { word: "yes", img: "https://i.imgur.com/g9U0G3x.png" },
+  { word: "yap", img: "https://i.imgur.com/mG9rZ3X.png" },
+  { word: "zip", img: "https://i.imgur.com/KtBwh8q.png" },
+  { word: "zoo", img: "https://i.imgur.com/8aM1U9t.png" },
+  { word: "cab", img: "https://i.imgur.com/YyYpE5G.png" },
+  { word: "dad", img: "https://i.imgur.com/qgV4yP1.png" },
+  { word: "bed", img: "https://i.imgur.com/Zg0K3Hu.png" },
+  { word: "jet", img: "https://i.imgur.com/nk8oF4K.png" },
+  { word: "mob", img: "https://i.imgur.com/3RV0ZtJ.png" },
+  { word: "nod", img: "https://i.imgur.com/7hVjVxZ.png" },
+  { word: "pad", img: "https://i.imgur.com/9jDpQyZ.png" },
+  { word: "tip", img: "https://i.imgur.com/BqnrF2n.png" },
+  { word: "van", img: "https://i.imgur.com/vX0r9yd.png" },
+  { word: "wet", img: "https://i.imgur.com/P7f1RjQ.png" }
+];
+
+let score = 0;
+let correctWord = null;
+
+function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
+
+function playSound() {
+  const shuffled = shuffle(words);
+  correctWord = shuffled[0];
+
+  // 使用 Google TTS 播放單字
+  const audio = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&q=${correctWord.word}&tl=en&client=tw-ob`);
+  audio.play();
+
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+
+  // 取三個選項
+  let choices = shuffle(words.slice(0, 3));
+  if (!choices.includes(correctWord)) choices[0] = correctWord;
+  choices = shuffle(choices);
+
+  choices.forEach(item => {
+    const btn = document.createElement("button");
+    btn.innerHTML = `<img src="${item.img}" width="100"><br>${item.word}`;
+    btn.onclick = () => checkAnswer(item);
+    optionsDiv.appendChild(btn);
+  });
+
+  document.getElementById("feedback").innerText = "";
+}
+
+function checkAnswer(item) {
+  const feedback = document.getElementById("feedback");
+  if (item.word === correctWord.word) {
+    score++;
+    feedback.innerText = "✅ 答對了！";
+  } else {
+    feedback.innerText = `❌ 答錯了！正確答案是 "${correctWord.word}"`;
+  }
+  document.getElementById("score").innerText = "分數：" + score;
+}
+</script>
+</body>
+</html>
