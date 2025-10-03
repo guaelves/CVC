@@ -2,11 +2,11 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<title>CVC 聲音辨認遊戲（手機友善）</title>
+<title>CVC 聲音辨認遊戲（再次聽 + 置中文字）</title>
 <style>
   body { font-family: Arial; text-align: center; background: #f0f8ff; }
   button { 
-    font-size: 64px;           /* 字體更大 */
+    font-size: 64px;           /* 字體大 */
     padding: 40px 20px;        /* 上下留白大 */
     margin: 20px; 
     cursor: pointer; 
@@ -18,12 +18,21 @@
     display: block; 
     width: 80%;                /* 手機橫向也好點 */
     line-height: 1.5em;        /* 三行高度 */
-    word-break: break-word;     /* 適合長單字換行 */
+    word-break: break-word;     
+    text-align: center;         /* 文字置中 */
   }
   button.selected { background-color: #1E90FF; color: white; }
   #score, #feedback { font-size: 36px; margin-top: 25px; }
-  #restart { font-size: 36px; padding: 20px 40px; background-color: #FF6347; color: white; border-radius: 16px; }
+  #restart, #replay { 
+    font-size: 36px; 
+    padding: 20px 40px; 
+    border-radius: 16px; 
+    margin: 10px; 
+  }
+  #restart { background-color: #FF6347; color: white; }
   #restart:hover { background-color: #FF4500; }
+  #replay { background-color: #32CD32; color: white; }
+  #replay:hover { background-color: #228B22; }
 </style>
 </head>
 <body>
@@ -32,6 +41,8 @@
 <div id="options"></div>
 <div id="feedback"></div>
 <div id="score">分數：0</div>
+
+<button id="replay" onclick="replayWord()">再次聽 🔊</button>
 <button id="restart" onclick="restartGame()">重新開始 🔄</button>
 
 <script>
@@ -56,6 +67,7 @@ function speak(word) {
   speechSynthesis.speak(utterance);
 }
 
+// 題目生成
 function playSound() {
   const shuffled = shuffle(words);
   correctWord = shuffled[0];
@@ -79,6 +91,11 @@ function playSound() {
   });
 
   document.getElementById("feedback").innerText = "";
+}
+
+// 再次聽按鈕
+function replayWord() {
+  if (correctWord) speak(correctWord);
 }
 
 function checkAnswer(btn, item) {
